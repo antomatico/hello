@@ -176,9 +176,48 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line);}
   .nav-links a{font-size:.66rem;}
   section{padding:70px 0;}
 }
+/* ---- access gate (login modal) — greyscale on white ---- */
+.aj-gate{position:fixed;inset:0;z-index:1000;background:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:24px;opacity:1;transition:opacity .4s ease;}
+.aj-gate.aj-hide{opacity:0;pointer-events:none;}
+.aj-card{width:100%;max-width:400px;background:#fff;border:1px solid #E6E4DF;border-radius:16px;box-shadow:0 30px 80px -40px rgba(24,24,27,.35),0 2px 8px rgba(24,24,27,.04);padding:38px 36px 32px;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#18181B;}
+.aj-mark{width:44px;height:44px;border-radius:11px;background:#18181B;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;letter-spacing:-.02em;margin-bottom:22px;}
+.aj-title{font-weight:800;font-size:1.5rem;letter-spacing:-.02em;line-height:1.1;margin:0 0 6px;}
+.aj-sub{font-size:.95rem;color:#6E6E73;line-height:1.5;margin:0 0 22px;}
+.aj-divider{height:1px;background:#EDEBE6;margin:0 0 22px;}
+.aj-field{margin-bottom:14px;}
+.aj-label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6E6E73;margin-bottom:7px;}
+.aj-input{width:100%;font-family:inherit;font-size:.95rem;color:#18181B;background:#FBFAF8;border:1px solid #E0DED8;border-radius:9px;padding:12px 13px;transition:border-color .18s,background .18s,box-shadow .18s;}
+.aj-input::placeholder{color:#B4B2AC;}
+.aj-input:focus{outline:none;border-color:#18181B;background:#fff;box-shadow:0 0 0 3px rgba(24,24,27,.07);}
+.aj-error{min-height:18px;font-size:.82rem;color:#3B3A36;margin:2px 0 2px;}
+.aj-btn{width:100%;font-family:inherit;font-weight:700;font-size:.95rem;letter-spacing:.01em;color:#fff;background:#18181B;border:none;border-radius:100px;padding:13px 18px;cursor:pointer;margin-top:6px;transition:transform .15s,background .2s,opacity .2s;}
+.aj-btn:hover{background:#000;transform:translateY(-1px);}
+.aj-btn:disabled{opacity:.55;cursor:default;transform:none;}
+.aj-foot{margin-top:18px;font-size:.7rem;color:#9A9A9E;letter-spacing:.06em;text-transform:uppercase;text-align:center;}
+@media (max-width:480px){.aj-card{padding:30px 24px 26px;}.aj-title{font-size:1.32rem;}}
 </style>
 </head>
 <body>
+
+<div class="aj-gate" id="aj-gate" role="dialog" aria-modal="true" aria-labelledby="aj-title">
+  <form class="aj-card" id="aj-gate-form" autocomplete="on">
+    <div class="aj-mark" aria-hidden="true">AJ</div>
+    <h2 class="aj-title" id="aj-title">Welcome!</h2>
+    <p class="aj-sub">Please login to view Ants&rsquo; profile.</p>
+    <div class="aj-divider"></div>
+    <div class="aj-field">
+      <label class="aj-label" for="aj-email">Email</label>
+      <input class="aj-input" id="aj-email" name="email" type="email" autocomplete="username" placeholder="you@example.com" required>
+    </div>
+    <div class="aj-field">
+      <label class="aj-label" for="aj-pass">Password</label>
+      <input class="aj-input" id="aj-pass" name="password" type="password" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+    </div>
+    <div class="aj-error" id="aj-error" role="alert" aria-live="polite"></div>
+    <button class="aj-btn" id="aj-submit" type="submit">View profile</button>
+    <div class="aj-foot">Ants Jackson &middot; Design &amp; Experience Lead</div>
+  </form>
+</div>
 
 <nav><div class="nav-in">
   <a class="brand" href="#top">Ants Jackson</a>
@@ -323,10 +362,10 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line);}
           <h3>The app</h3>
           <p>The Z App is Z Energy's customer mobile app. Its core experience was designed by <b>RUSH Digital</b>; my role is to make <b>regular feature enhancements and additions</b>, extending and refining the app release over release, in step with the Ampol &amp; Z design system.</p>
           <h3>What I contribute</h3>
-          <p>From quality-of-life improvements to new capabilities, myself an our small team devise, design and usertest enhancements that sit comfortably within the established app language responding to changing needs, customer habits to achieve everyday usefulness.</p>
+          <p>From quality-of-life improvements to new capabilities, myself and our small team devise, design and user-test enhancements that sit comfortably within the established app language, responding to changing needs and customer habits to achieve everyday usefulness.</p>
           <h3>In progress</h3>
           <p>Most recently I've been working on a <b>homescreen evolution</b>, a sizable rethink of the app's front door. That work is <b>confidential until release</b>, so the full story and imagery will follow once it ships.</p>
-          <p>Research for the work has been forensic. Whilst we have confirmed we are sitting on an app that excells in all usability analysis, the sad fact that customers express clear gaps in comprehension creeate design changes we can swiftly and confidently close.e</p>
+          <p>Research for the work has been forensic. Whilst we have confirmed we are sitting on an app that excels in all usability analysis, the sad fact that customers express clear gaps in comprehension creates design changes we can swiftly and confidently close.</p>
         </div>
         <div class="nda reveal">
           <span class="tag">Confidential</span>
@@ -647,5 +686,6 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line);}
   setTimeout(size, 400);
 })();
 </script>
+<script src="assets/auth.js"></script>
 </body>
 </html>

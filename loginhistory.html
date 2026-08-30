@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login history — Ants Jackson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#FCFCFA;--ink:#18181B;--muted:#6E6E73;--faint:#9A9A9E;--line:#E6E4DF;--panel:#FBFAF8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--paper);color:var(--ink);
+  -webkit-font-smoothing:antialiased;line-height:1.6;font-size:16px;}
+a{color:inherit;}
+
+/* ---- access gate (login modal) — greyscale on white ---- */
+.aj-gate{position:fixed;inset:0;z-index:1000;background:#FFFFFF;display:flex;align-items:center;justify-content:center;padding:24px;opacity:1;transition:opacity .4s ease;}
+.aj-gate.aj-hide{opacity:0;pointer-events:none;}
+.aj-card{width:100%;max-width:400px;background:#fff;border:1px solid #E6E4DF;border-radius:16px;box-shadow:0 30px 80px -40px rgba(24,24,27,.35),0 2px 8px rgba(24,24,27,.04);padding:38px 36px 32px;color:#18181B;}
+.aj-mark{width:44px;height:44px;border-radius:11px;background:#18181B;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;letter-spacing:-.02em;margin-bottom:22px;}
+.aj-title{font-weight:800;font-size:1.5rem;letter-spacing:-.02em;line-height:1.1;margin:0 0 6px;}
+.aj-sub{font-size:.95rem;color:#6E6E73;line-height:1.5;margin:0 0 22px;}
+.aj-divider{height:1px;background:#EDEBE6;margin:0 0 22px;}
+.aj-field{margin-bottom:14px;}
+.aj-label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6E6E73;margin-bottom:7px;}
+.aj-input{width:100%;font-family:inherit;font-size:.95rem;color:#18181B;background:#FBFAF8;border:1px solid #E0DED8;border-radius:9px;padding:12px 13px;transition:border-color .18s,background .18s,box-shadow .18s;}
+.aj-input::placeholder{color:#B4B2AC;}
+.aj-input:focus{outline:none;border-color:#18181B;background:#fff;box-shadow:0 0 0 3px rgba(24,24,27,.07);}
+.aj-error{min-height:18px;font-size:.82rem;color:#3B3A36;margin:2px 0 2px;}
+.aj-btn{width:100%;font-family:inherit;font-weight:700;font-size:.95rem;letter-spacing:.01em;color:#fff;background:#18181B;border:none;border-radius:100px;padding:13px 18px;cursor:pointer;margin-top:6px;transition:transform .15s,background .2s,opacity .2s;}
+.aj-btn:hover{background:#000;transform:translateY(-1px);}
+.aj-btn:disabled{opacity:.55;cursor:default;transform:none;}
+.aj-foot{margin-top:18px;font-size:.7rem;color:#9A9A9E;letter-spacing:.06em;text-transform:uppercase;text-align:center;}
+
+/* ---- history page ---- */
+.wrap{max-width:900px;margin:0 auto;padding:48px 28px 80px;}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px;}
+.back{font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
+.back:hover{color:var(--ink);}
+.mark-sm{width:38px;height:38px;border-radius:10px;background:#18181B;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;letter-spacing:-.02em;}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px -50px rgba(24,24,27,.3),0 2px 8px rgba(24,24,27,.03);padding:30px 30px 26px;}
+.p-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px;}
+.p-title{font-weight:800;font-size:1.4rem;letter-spacing:-.02em;}
+.p-sub{font-size:.9rem;color:var(--muted);margin-top:2px;}
+.p-actions{display:flex;align-items:center;gap:10px;}
+.count{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
+.refresh{font-family:inherit;font-size:.8rem;font-weight:600;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:100px;padding:8px 16px;cursor:pointer;transition:background .2s,border-color .2s;}
+.refresh:hover{background:#F4F3EF;border-color:#D9D6CD;}
+.rule{height:1px;background:#EDEBE6;margin:18px 0 4px;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.86rem;}
+th{text-align:left;font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:14px 12px 10px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td{padding:13px 12px;border-bottom:1px solid #F1EFEA;color:#2E2D2A;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td.email{font-weight:600;color:var(--ink);}
+td.when{white-space:nowrap;color:var(--ink);}
+td.ua{color:var(--muted);font-size:.8rem;max-width:280px;}
+.pill{display:inline-block;font-size:.72rem;font-weight:600;color:var(--muted);background:#F4F3EF;border:1px solid var(--line);border-radius:100px;padding:3px 10px;}
+.note{padding:26px 8px;color:var(--muted);font-size:.9rem;line-height:1.6;text-align:center;}
+.note code{background:#F4F3EF;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.85em;}
+@media (max-width:520px){.aj-card{padding:30px 24px 26px;}.panel{padding:22px 18px;}td.ua{display:none;}th.ua{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="aj-gate" id="aj-gate" role="dialog" aria-modal="true" aria-labelledby="aj-title">
+  <form class="aj-card" id="aj-gate-form" autocomplete="on">
+    <div class="aj-mark" aria-hidden="true">AJ</div>
+    <h2 class="aj-title" id="aj-title">Welcome!</h2>
+    <p class="aj-sub">Please login to view the access log.</p>
+    <div class="aj-divider"></div>
+    <div class="aj-field">
+      <label class="aj-label" for="aj-email">Email</label>
+      <input class="aj-input" id="aj-email" name="email" type="email" autocomplete="username" placeholder="you@example.com" required>
+    </div>
+    <div class="aj-field">
+      <label class="aj-label" for="aj-pass">Password</label>
+      <input class="aj-input" id="aj-pass" name="password" type="password" autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+    </div>
+    <div class="aj-error" id="aj-error" role="alert" aria-live="polite"></div>
+    <button class="aj-btn" id="aj-submit" type="submit">View log</button>
+    <div class="aj-foot">Ants Jackson &middot; Design &amp; Experience Lead</div>
+  </form>
+</div>
+
+<div class="wrap">
+  <div class="top">
+    <div class="mark-sm" aria-hidden="true">AJ</div>
+    <a class="back" href="index.html">&larr; Back to profile</a>
+  </div>
+  <div class="panel">
+    <div class="p-head">
+      <div>
+        <div class="p-title">Login history</div>
+        <div class="p-sub">Everyone who has signed in to view the profile.</div>
+      </div>
+      <div class="p-actions">
+        <span class="count" id="log-count"></span>
+        <button class="refresh" id="log-refresh" type="button">Refresh</button>
+      </div>
+    </div>
+    <div class="rule"></div>
+    <div class="table-wrap">
+      <div id="log-body"><div class="note">&nbsp;</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];}); }
+  function fmtWhen(v){
+    var d = new Date(v);
+    if (isNaN(d.getTime())) return esc(v);
+    try { return d.toLocaleString(undefined,{year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}); }
+    catch(e){ return d.toString(); }
+  }
+  function browserOf(ua){
+    ua = ua || "";
+    var os = /iPhone|iPad|iPod/.test(ua)?"iOS":/Android/.test(ua)?"Android":/Macintosh/.test(ua)?"macOS":/Windows/.test(ua)?"Windows":/Linux/.test(ua)?"Linux":"";
+    var br = /Edg\//.test(ua)?"Edge":/OPR\//.test(ua)?"Opera":/Chrome\//.test(ua)?"Chrome":/Firefox\//.test(ua)?"Firefox":/Safari\//.test(ua)?"Safari":"Browser";
+    return (br + (os?" · "+os:"")) || "—";
+  }
+
+  var current = null; // JSONP callback name in flight
+  function loadLog(){
+    var ep = (window.AJ && window.AJ.endpoint) || "";
+    var body = document.getElementById("log-body");
+    var countEl = document.getElementById("log-count");
+    countEl.textContent = "";
+    if (!ep){
+      body.innerHTML = '<div class="note">Logging isn’t switched on yet.<br>Add your Google Apps Script URL to <code>assets/auth.js</code> (the <code>LOGGING_ENDPOINT</code> line), then reload. Follow the setup steps you were given.</div>';
+      return;
+    }
+    body.innerHTML = '<div class="note">Loading…</div>';
+    var cb = "__ajLog_" + Date.now() + "_" + Math.floor(Math.random()*1e6);
+    current = cb;
+    var s = document.createElement("script");
+    var timer = setTimeout(function(){ cleanup(); if(current===cb){ body.innerHTML = '<div class="note">No response from the log. Check the Apps Script is deployed with access set to <b>Anyone</b>.</div>'; } }, 12000);
+    function cleanup(){ clearTimeout(timer); try{ delete window[cb]; }catch(e){ window[cb]=undefined; } if(s.parentNode) s.parentNode.removeChild(s); }
+    window[cb] = function(resp){ cleanup(); render((resp && resp.rows) ? resp.rows : []); };
+    s.onerror = function(){ cleanup(); body.innerHTML = '<div class="note">Couldn’t reach the log. Double-check the endpoint URL in <code>assets/auth.js</code>.</div>'; };
+    s.src = ep + (ep.indexOf("?") > -1 ? "&" : "?") + "callback=" + cb + "&_=" + Date.now();
+    document.body.appendChild(s);
+  }
+
+  function render(rows){
+    var body = document.getElementById("log-body");
+    var countEl = document.getElementById("log-count");
+    rows = rows || [];
+    // newest first
+    rows.sort(function(a,b){ return new Date(b.time) - new Date(a.time); });
+    countEl.textContent = rows.length + (rows.length === 1 ? " visit" : " visits");
+    if (!rows.length){ body.innerHTML = '<div class="note">No logins recorded yet.</div>'; return; }
+    var html = '<table><thead><tr>' +
+      '<th>When</th><th>Email</th><th>Page</th><th>Timezone</th><th class="ua">Browser</th>' +
+      '</tr></thead><tbody>';
+    for (var i=0;i<rows.length;i++){
+      var r = rows[i];
+      html += '<tr>' +
+        '<td class="when">' + fmtWhen(r.time) + '</td>' +
+        '<td class="email">' + esc(r.email) + '</td>' +
+        '<td><span class="pill">' + esc(r.page || "index.html") + '</span></td>' +
+        '<td>' + esc(r.tz || "—") + '</td>' +
+        '<td class="ua">' + esc(browserOf(r.userAgent)) + '</td>' +
+      '</tr>';
+    }
+    html += '</tbody></table>';
+    body.innerHTML = html;
+  }
+
+  // Runs once the viewer is past the login gate (auth.js calls this).
+  window.AJ_onAccess = function(){ loadLog(); };
+  document.getElementById("log-refresh").addEventListener("click", loadLog);
+})();
+</script>
+<script src="assets/auth.js"></script>
+</body>
+</html>

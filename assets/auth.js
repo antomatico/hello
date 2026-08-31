@@ -26,7 +26,7 @@
 
   // Login logging (optional). Paste your Google Apps Script Web App /exec URL
   // here to record each login to your Google Sheet. Leave "" to disable logging.
-  var LOGGING_ENDPOINT = "";
+  var LOGGING_ENDPOINT = "https://script.google.com/macros/s/AKfycbyJfqxnme4ClPkpu-qv0JnaANfraEojuzsOmjxUQezjkoI3C2LYnfPEj7uB8W6GkZ5DCA/exec";
   /* ----------------------------------------------------------------------- */
 
   // Expose the endpoint so loginhistory.html can read the same value.
